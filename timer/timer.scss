@@ -1,0 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    #clock {
+        width: 85vh;
+        height: 85vh;
+        border-radius: 50%;
+        border: 3px solid red;
+        box-sizing: border-box;
+    }
+
+    // TODO: styles for tips
+
+    // TODO: putting a turn-around spot
+
+    // TODO: pass dag as a result from js
+}

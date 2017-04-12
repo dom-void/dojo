@@ -1,0 +1,22 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+#container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#container #clock {
+  width: 85vh;
+  height: 85vh;
+  border-radius: 50%;
+  border: 3px solid red;
+  box-sizing: border-box;
+}
+
+/*# sourceMappingURL=maps/timer.css.map */
