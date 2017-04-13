@@ -9,9 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var canvas = document.getElementById("clock");
     var context = canvas.getContext("2d");
 
-
-
-
     var dial = {
         centerX: 150,
         centerY: 150,
@@ -19,29 +16,16 @@ document.addEventListener('DOMContentLoaded', function () {
         outerRadius: 100,
         angleOffset: -.5 * Math.PI,
         get angleStart() { return this.angleOffset; },
-        // angleEnd: this.angleStart,
-
+        color: 'rgba(255,255,0,.5)',
         draw: function (angle) {
-            // console.log(angle);
-
-            // this.angleEnd = angle;
             context.beginPath();
             context.arc(this.centerX, this.centerY, this.innerRadius, this.angleStart, angle, false);
             context.arc(this.centerX, this.centerY, this.outerRadius, angle, this.angleStart, true);
-            context.fillStyle = 'rgba(255,255,0,.5)';
+            context.fillStyle = this.color;
             context.fill();
             context.closePath();
         }
     }
-    console.log(dial.angleStart);
-    
-    context.beginPath();
-    context.arc(150, 150, 50, dial.angleStart, 2, false);
-    context.arc(150, 150, 100, 2, dial.angleStart, true);
-    context.fillStyle = 'rgba(255,255,0,.5)';
-    context.fill();
-    context.closePath();
-    dial.draw(2);
 
     window.requestAnimationFrame = (function () {
         return window.requestAnimationFrame ||
@@ -74,18 +58,4 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(actualHours24.toFixed(2), actualMinutes.toFixed(2), actualSeconds.toFixed(2));
         window.requestAnimationFrame(drawLoop);
     }
-
-
-
-    // TODO: hours circle run
-
-    // TODO: minutes circle run
-
-    // TODO: seconds circle run
-
-    // TODO: put it inside time interval
-
-    // TODO: try to build clock in class
-
-
 })
