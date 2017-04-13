@@ -54,19 +54,24 @@ document.addEventListener('DOMContentLoaded', function () {
         window.requestAnimationFrame(drawLoop);
     }, false);
 
-    function drawLoop() {
+    function time() {
         var date = new Date();
         var timeZoneOffset = date.getTimezoneOffset()*minutes;
         var actualTime = date.getTime()-timeZoneOffset; // counting from 1 Jan 1970
+        return actualTime;
+    }
+
+    function drawLoop() {
+        var actualTime = time();
         var fullDaysInActualTime = Math.floor(actualTime / halfDays) * halfDays;
         var daylySeconds = actualTime - fullDaysInActualTime;
         var actualHours = daylySeconds / hours;
         var actualMinutes = (daylySeconds - Math.floor(actualHours) * hours) / minutes;
         var actualSeconds = (daylySeconds - ((Math.floor(actualHours) * hours) + Math.floor(actualMinutes) * minutes)) / seconds;
         var angleStart = -.5 * Math.PI;
-        var secondsAngleEnd = secondsDial.angleOffset + actualSeconds * (2 * Math.PI / 60);
-        var minutesAngleEnd = minutesDial.angleOffset + actualMinutes * (2 * Math.PI / 60);
-        var hoursAngleEnd = minutesDial.angleOffset + actualHours * (2 * Math.PI / 12);
+        var secondsAngleEnd = secondsDial.angleStart + actualSeconds * (2 * Math.PI / 60);
+        var minutesAngleEnd = minutesDial.angleStart + actualMinutes * (2 * Math.PI / 60);
+        var hoursAngleEnd = minutesDial.angleStart + actualHours * (2 * Math.PI / 12);
         context.clearRect(0, 0, canvas.width, canvas.height);
         hoursDial.draw(angleStart,hoursAngleEnd);
         minutesDial.draw(angleStart,minutesAngleEnd);
