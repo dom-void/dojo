@@ -6,40 +6,66 @@ document.addEventListener('DOMContentLoaded', function () {
     var hours = minutes * 60;
     var days = hours * 24;
 
-    var actualTime = new Date().getTime(); // counting from 1 Jan 1970
-    var fullDaysInActualTime = Math.floor(actualTime/days)*days;
-    var daylySeconds = actualTime - fullDaysInActualTime;
-    console.log(actualTime, days, fullDaysInActualTime, daylySeconds);
 
-    var actualHours24 = daylySeconds / hours;
-    var actualMinutes = (daylySeconds - Math.floor(actualHours24)*hours) / minutes;
-    var actualSeconds = (daylySeconds - ((Math.floor(actualHours24)*hours) + Math.floor(actualMinutes)*minutes)) / seconds;
 
-    var c = document.getElementById("clock");
-    var ctx = c.getContext("2d");
 
-    var centerPoint = {
-        x: 150,
-        y: 150
-    };
-    var angleOffset = -.5*Math.PI;
-    var angleStart = angleOffset;
-    var angleEnd = angleOffset+actualMinutes*(2*Math.PI/60);
+    var dial = {
+        centerX: 150,
+        centerY: 150,
+        innerRadius: 50,
+        outerRadius: 100,
+        angleOffset: -.5 * Math.PI,
+        angleStart: this.angleOffset,
+        canvas: document.getElementById("clock"),
+        context: this.canvas.getContext("2d"),
+        // angleEnd: this.angleStart,
 
-    ctx.beginPath();
-    ctx.arc(centerPoint.x,centerPoint.y,100,angleStart,angleEnd,false);
-    ctx.arc(centerPoint.x,centerPoint.y,50,angleEnd,angleStart,true);
-    ctx.fillStyle = 'rgba(255,255,0,.5)';
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(centerPoint.x,centerPoint.y,90,-0.5*Math.PI,.7*Math.PI,false);
-    ctx.arc(centerPoint.x,centerPoint.y,40,.7*Math.PI,-0.5*Math.PI,true);
-    ctx.fillStyle = 'rgba(255,0,255,.5)';
-    ctx.fill();
-    ctx.closePath();
+        draw: function (angle) {
+            this.angleEnd = angle;
+            this.context.beginPath();
+            this.context.arc(this.centerX, this.centerY, this.innerRadius, this.angleStart, angle, false);
+            this.context.arc(this.centerX, this.centerY, this.outerRadius, angle, this.angleStart, true);
+            this.context.fillStyle = 'rgba(255,255,0,.5)';
+            this.context.fill();
+            this.context.closePath();
+        }
+    }
 
-    console.log(actualHours24.toFixed(2), actualMinutes.toFixed(2), actualSeconds.toFixed(2), angleEnd.toFixed(2));
-    
+    dial.draw(5);
+
+    // window.requestAnimationFrame = (function () {
+    //     return window.requestAnimationFrame ||
+    //         window.webkitRequestAnimationFrame ||
+    //         window.mozRequestAnimationFrame ||
+    //         window.oRequestAnimationFrame ||
+    //         window.msRequestAnimationFrame ||
+    //         function (callback) {
+    //             window.setTimeout(callback, 1000 / 60);
+    //         };
+    // })();
+
+    // window.addEventListener('load', function () {
+    //     window.requestAnimationFrame(drawLoop);
+    // }, false);
+
+    // function drawLoop() {
+    //     var actualTime = new Date().getTime(); // counting from 1 Jan 1970
+    //     var fullDaysInActualTime = Math.floor(actualTime / days) * days;
+    //     var daylySeconds = actualTime - fullDaysInActualTime;
+    //     // console.log(actualTime, days, fullDaysInActualTime, daylySeconds);
+
+    //     var actualHours24 = daylySeconds / hours;
+    //     var actualMinutes = (daylySeconds - Math.floor(actualHours24) * hours) / minutes;
+    //     var actualSeconds = (daylySeconds - ((Math.floor(actualHours24) * hours) + Math.floor(actualMinutes) * minutes)) / seconds;
+    //     var angle = dial.angleOffset + actualSeconds * (2 * Math.PI / 60)
+    //     context.clearRect(0, 0, canvas.width, canvas.height);
+    //     // dial.centerX += 2;
+    //     dial.draw(5);
+    //     console.log(actualHours24.toFixed(2), actualMinutes.toFixed(2), actualSeconds.toFixed(2));
+    //     window.requestAnimationFrame(drawLoop);
+    // }
+
+
 
     // TODO: hours circle run
 
