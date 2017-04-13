@@ -4,28 +4,40 @@ document.addEventListener('DOMContentLoaded', function () {
     var seconds = 1000;
     var minutes = seconds * 60;
     var hours = minutes * 60;
-    var days = hours * 24;
+    var halfDays = hours * 12;
+    var days = 2*halfDays;
 
     var canvas = document.getElementById("clock");
     var context = canvas.getContext("2d");
 
-    var dial = {
-        centerX: 150,
-        centerY: 150,
-        innerRadius: 50,
-        outerRadius: 100,
-        angleOffset: -.5 * Math.PI,
-        get angleStart() { return this.angleOffset; },
-        color: 'rgba(255,255,0,.5)',
-        draw: function (angle) {
-            context.beginPath();
-            context.arc(this.centerX, this.centerY, this.innerRadius, this.angleStart, angle, false);
-            context.arc(this.centerX, this.centerY, this.outerRadius, angle, this.angleStart, true);
-            context.fillStyle = this.color;
-            context.fill();
-            context.closePath();
-        }
+    function Dial(innerRad,outerRad,color) {
+        this.centerX = 150;
+        this.centerY = 150;
+        this.innerRadius = innerRad;
+        this.outerRadius = outerRad;
+        this.angleOffset = -.5 * Math.PI;
+        this.angleStart = (function() { return this.angleOffset; })();
+        this.angleEnd = 0;
+        this.color = color;
     }
+    Dial.prototype.draw = function (angleStart,angleEnd) {
+        this.angleStart = angleStart;
+        this.angleEnd = angleEnd;
+        context.beginPath();
+        context.arc(this.centerX, this.centerY, this.innerRadius, angleStart, angleEnd, false);
+        context.arc(this.centerX, this.centerY, this.outerRadius, angleEnd, angleStart, true);
+        context.fillStyle = this.color;
+        context.fill();
+        context.closePath();
+    }
+
+    var hoursColor = 'rgba(255,0,0,.7)';
+    var minutesColor = 'rgba(0,0,255,.5)';
+    var secondsColor = 'rgba(255,255,0,.5)';
+
+    var hoursDial = new Dial(60,140,hoursColor);
+    var minutesDial = new Dial(40,120,minutesColor);
+    var secondsDial = new Dial(20,100,secondsColor);
 
     window.requestAnimationFrame = (function () {
         return window.requestAnimationFrame ||
@@ -43,19 +55,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }, false);
 
     function drawLoop() {
-        var actualTime = new Date().getTime(); // counting from 1 Jan 1970
-        var fullDaysInActualTime = Math.floor(actualTime / days) * days;
+        var date = new Date();
+        var timeZoneOffset = date.getTimezoneOffset()*minutes;
+        var actualTime = date.getTime()-timeZoneOffset; // counting from 1 Jan 1970
+        var fullDaysInActualTime = Math.floor(actualTime / halfDays) * halfDays;
         var daylySeconds = actualTime - fullDaysInActualTime;
-        // console.log(actualTime, days, fullDaysInActualTime, daylySeconds);
-
-        var actualHours24 = daylySeconds / hours;
-        var actualMinutes = (daylySeconds - Math.floor(actualHours24) * hours) / minutes;
-        var actualSeconds = (daylySeconds - ((Math.floor(actualHours24) * hours) + Math.floor(actualMinutes) * minutes)) / seconds;
-        var angle = dial.angleOffset + actualSeconds * (2 * Math.PI / 60)
+        var actualHours = daylySeconds / hours;
+        var actualMinutes = (daylySeconds - Math.floor(actualHours) * hours) / minutes;
+        var actualSeconds = (daylySeconds - ((Math.floor(actualHours) * hours) + Math.floor(actualMinutes) * minutes)) / seconds;
+        var angleStart = -.5 * Math.PI;
+        var secondsAngleEnd = secondsDial.angleOffset + actualSeconds * (2 * Math.PI / 60);
+        var minutesAngleEnd = minutesDial.angleOffset + actualMinutes * (2 * Math.PI / 60);
+        var hoursAngleEnd = minutesDial.angleOffset + actualHours * (2 * Math.PI / 12);
         context.clearRect(0, 0, canvas.width, canvas.height);
-        // dial.centerX += 2;
-        dial.draw(angle);
-        console.log(actualHours24.toFixed(2), actualMinutes.toFixed(2), actualSeconds.toFixed(2));
+        hoursDial.draw(angleStart,hoursAngleEnd);
+        minutesDial.draw(angleStart,minutesAngleEnd);
+        secondsDial.draw(angleStart,secondsAngleEnd);
         window.requestAnimationFrame(drawLoop);
     }
 })
