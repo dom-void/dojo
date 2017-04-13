@@ -3,10 +3,52 @@
     padding: 0;
 }
 
+body {
+  font-family: sans-serif;
+}
+
+h1 {
+  margin: 30px 0 20px 0;
+}
+
 #container {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+}
+
+#buttons {
+    width: 300px;
+    height: 85px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.buttons {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.button {
+    width: 140px;
+    height: 35px;
+    background: coral;
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: center;
+    color: gray;
+}
+.button:hover {
+    background: orangered;
+    color: black;
 }
