@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var hours = minutes * 60;
     var days = hours * 24;
 
+    var canvas = document.getElementById("clock");
+    var context = canvas.getContext("2d");
 
 
 
@@ -16,18 +18,18 @@ document.addEventListener('DOMContentLoaded', function () {
         outerRadius: 100,
         angleOffset: -.5 * Math.PI,
         angleStart: this.angleOffset,
-        canvas: document.getElementById("clock"),
-        context: this.canvas.getContext("2d"),
         // angleEnd: this.angleStart,
 
         draw: function (angle) {
+            console.log(angle);
+            
             this.angleEnd = angle;
-            this.context.beginPath();
-            this.context.arc(this.centerX, this.centerY, this.innerRadius, this.angleStart, angle, false);
-            this.context.arc(this.centerX, this.centerY, this.outerRadius, angle, this.angleStart, true);
-            this.context.fillStyle = 'rgba(255,255,0,.5)';
-            this.context.fill();
-            this.context.closePath();
+            context.beginPath();
+            context.arc(this.centerX, this.centerY, this.innerRadius, this.angleStart, angle, false);
+            context.arc(this.centerX, this.centerY, this.outerRadius, angle, this.angleStart, true);
+            context.fillStyle = 'rgba(255,255,0,.5)';
+            context.fill();
+            context.closePath();
         }
     }
 
@@ -58,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //     var actualMinutes = (daylySeconds - Math.floor(actualHours24) * hours) / minutes;
     //     var actualSeconds = (daylySeconds - ((Math.floor(actualHours24) * hours) + Math.floor(actualMinutes) * minutes)) / seconds;
     //     var angle = dial.angleOffset + actualSeconds * (2 * Math.PI / 60)
-    //     context.clearRect(0, 0, canvas.width, canvas.height);
+    //     dial.context.clearRect(0, 0, dial.canvas.width, dial.canvas.height);
     //     // dial.centerX += 2;
     //     dial.draw(5);
     //     console.log(actualHours24.toFixed(2), actualMinutes.toFixed(2), actualSeconds.toFixed(2));
