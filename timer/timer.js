@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var canvas = document.getElementById("clock");
     var context = canvas.getContext("2d");
 
+    var switcher = true;
+
     function Time() {
         this.actualHours;
         this.actualMinutes;
@@ -31,13 +33,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     var time = new Time();
 
+    var angleStart = -.5 * Math.PI;
+
     function Dial(innerRad, outerRad, color) {
         this.centerX = 150;
         this.centerY = 150;
         this.innerRadius = innerRad;
         this.outerRadius = outerRad;
         this.angleOffset = -.5 * Math.PI;
-        this.angleStart = (function () { return this.angleOffset; })();
+        this.angleStart = Math.PI; // (function () { return this.angleOffset; })();
         this.angleEnd = 0;
         this.color = color;
     }
@@ -60,20 +64,48 @@ document.addEventListener('DOMContentLoaded', function () {
     var minutesDial = new Dial(40, 120, minutesColor);
     var secondsDial = new Dial(20, 100, secondsColor);
 
-    // window.requestAnimationFrame = (function () {
-    //     return window.requestAnimationFrame ||
-    //         window.webkitRequestAnimationFrame ||
-    //         window.mozRequestAnimationFrame ||
-    //         window.oRequestAnimationFrame ||
-    //         window.msRequestAnimationFrame ||
-    //         function (callback) {
-    //             window.setTimeout(callback, 1000 / 60);
-    //         };
-    // })();
 
-    window.requestAnimationFrame = function (callback) {
-        window.setTimeout(callback, 1000 / 1);
-    };
+    // window.requestAnimationFrame = function (callback) {
+    //     window.setTimeout(callback, 1000 / 1);
+    // };
+    document.getElementById('button3').addEventListener('click', function () {
+        console.log('działa');
+        
+        if (switcher) {
+            switcher = false;
+        } else {
+            switcher = true;
+        }
+        window.requestAnimationFrame(drawLoop);
+        return switcher;
+    })
+
+    window.requestAnimationFrame = (function () {
+        if (switcher) {
+            return function (callback) {
+                window.setTimeout(callback, 1000 / 1);
+            }
+        } else {
+            return window.requestAnimationFrame ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.oRequestAnimationFrame ||
+                window.msRequestAnimationFrame ||
+                function (callback) {
+                    window.setTimeout(callback, 1000 / 60);
+                };
+        }
+    })();
+
+
+    document.getElementById('button1').addEventListener('click', function () {
+        angleStart = -.5 * Math.PI;
+        hoursDial.angleStart = hoursDial.angleOffset;
+    })
+    document.getElementById('button2').addEventListener('click', function () {
+        hoursDial.angleStart = Math.PI;
+    })
+    
 
     window.addEventListener('load', function () {
         window.requestAnimationFrame(drawLoop);
@@ -81,12 +113,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function drawLoop() {
         time.setTimeParameters();
-        var angleStart = -.5 * Math.PI;
+
         var secondsAngleEnd = secondsDial.angleStart + time.actualSeconds * (2 * Math.PI / 60);
         var minutesAngleEnd = minutesDial.angleStart + time.actualMinutes * (2 * Math.PI / 60);
         var hoursAngleEnd = minutesDial.angleStart + time.actualHours * (2 * Math.PI / 12);
         context.clearRect(0, 0, canvas.width, canvas.height);
-        hoursDial.draw(angleStart, hoursAngleEnd);
+        hoursDial.draw(hoursDial.angleStart, hoursAngleEnd);
         minutesDial.draw(angleStart, minutesAngleEnd);
         secondsDial.draw(angleStart, secondsAngleEnd);
         window.requestAnimationFrame(drawLoop);
