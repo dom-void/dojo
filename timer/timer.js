@@ -31,26 +31,73 @@ document.addEventListener('DOMContentLoaded', function () {
         this.actualMinutes = ((daylySeconds - Math.floor(this.actualHours) * hours) / minutes).toFixed(2);
         this.actualSeconds = ((daylySeconds - ((Math.floor(this.actualHours) * hours) + Math.floor(this.actualMinutes) * minutes)) / seconds).toFixed(2);
     }
+    Time.prototype.getTimeValue = function (name) {
+        switch (name) {
+            case 'seconds':
+                return this.actualSeconds;
+                break;
+            case 'minutes':
+                return this.actualMinutes;
+                break;
+            case 'hours':
+                return this.actualHours;
+                break;
+            default:
+                console.log('wrong setTimeParameters() param: "seconds", "minutes" or "hours"');
+                break;
+        }
+    }
     var time = new Time();
 
     var angleStart = -.5 * Math.PI;
 
-    function Dial(innerRad, outerRad, color) {
+    function Dial(name, innerRad, outerRad, color) {
+        this.name = name;
         this.centerX = 150;
         this.centerY = 150;
         this.innerRadius = innerRad;
         this.outerRadius = outerRad;
         this.angleOffset = -.5 * Math.PI;
-        this.angleStart = Math.PI; // (function () { return this.angleOffset; })();
-        this.angleEnd = 0;
+        this.angleTimerStart;
+        this.angleStart; // (function () { return this.angleOffset; })();
+        this.angleEnd;
+        this.fullDialValue = 60;
         this.color = color;
     }
-    Dial.prototype.draw = function (angleStart, angleEnd) {
-        this.angleStart = angleStart;
-        this.angleEnd = angleEnd;
+    Dial.prototype.setStart = function (mode) {
+        switch (mode) {
+            case 'clock':
+                this.angleStart = this.angleOffset;
+                break;
+            case 'timer':
+                this.angleStart = this.angleTimerStart;
+                break;
+            default:
+                console.log('wrong setStart() param: "clock" or "timer"');
+                break;
+        }
+    }
+    Dial.prototype.setAngle = function (side) {
+        time.setTimeParameters();
+        switch (side) {
+            case 'start':
+// FIXME: ▲▼ check why this already gives about 1h and few minutes on start or reset
+                this.angleTimerStart = this.angleOffset + time.getTimeValue(this.name) * (2 * Math.PI / this.fullDialValue);
+                break;
+            case 'end':
+                this.angleEnd = this.angleStart + time.getTimeValue(this.name) * (2 * Math.PI / this.fullDialValue);
+                break;
+            default:
+                console.log('wrong setAngle() param: "start" or "end"');
+                break;
+        }
+    }
+    Dial.prototype.draw = function () {
+        // this.angleStart = angleStart;
+        // this.angleEnd = angleEnd;
         context.beginPath();
-        context.arc(this.centerX, this.centerY, this.innerRadius, angleStart, angleEnd, false);
-        context.arc(this.centerX, this.centerY, this.outerRadius, angleEnd, angleStart, true);
+        context.arc(this.centerX, this.centerY, this.innerRadius, this.angleStart, this.angleEnd, false);
+        context.arc(this.centerX, this.centerY, this.outerRadius, this.angleEnd, this.angleStart, true);
         context.fillStyle = this.color;
         context.fill();
         context.closePath();
@@ -60,25 +107,19 @@ document.addEventListener('DOMContentLoaded', function () {
     var minutesColor = 'rgba(0,0,255,.5)';
     var secondsColor = 'rgba(255,255,0,.5)';
 
-    var hoursDial = new Dial(60, 140, hoursColor);
-    var minutesDial = new Dial(40, 120, minutesColor);
-    var secondsDial = new Dial(20, 100, secondsColor);
+    var hoursDial = new Dial('hours', 60, 140, hoursColor);
+    hoursDial.fullDialValue = 12;
+    var minutesDial = new Dial('minutes', 40, 120, minutesColor);
+    var secondsDial = new Dial('seconds', 20, 100, secondsColor);
+// FIXME: ▼ check why it's not starting itself
+    hoursDial.setAngle('start');
+    minutesDial.setAngle('start');
+    secondsDial.setAngle('start');
 
 
     // window.requestAnimationFrame = function (callback) {
     //     window.setTimeout(callback, 1000 / 1);
     // };
-    document.getElementById('button3').addEventListener('click', function () {
-        console.log('działa');
-        
-        if (switcher) {
-            switcher = false;
-        } else {
-            switcher = true;
-        }
-        window.requestAnimationFrame(drawLoop);
-        return switcher;
-    })
 
     window.requestAnimationFrame = (function () {
         if (switcher) {
@@ -99,28 +140,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     document.getElementById('button1').addEventListener('click', function () {
-        angleStart = -.5 * Math.PI;
-        hoursDial.angleStart = hoursDial.angleOffset;
+        // clock
+        hoursDial.setStart('clock');
+        minutesDial.setStart('clock');
+        secondsDial.setStart('clock');
     })
     document.getElementById('button2').addEventListener('click', function () {
-        hoursDial.angleStart = Math.PI;
+        // timer
+        hoursDial.setStart('timer');
+        minutesDial.setStart('timer');
+        secondsDial.setStart('timer');
     })
-    
+    document.getElementById('button3').addEventListener('click', function () {
+        // smooth
+        console.log('działa');
+
+        if (switcher) {
+            switcher = false;
+        } else {
+            switcher = true;
+        }
+        window.requestAnimationFrame(drawLoop);
+        return switcher;
+    })
+    document.getElementById('button4').addEventListener('click', function () {
+        // reset timer
+        hoursDial.setAngle('start');
+        minutesDial.setAngle('start');
+        secondsDial.setAngle('start');
+    })
+
 
     window.addEventListener('load', function () {
         window.requestAnimationFrame(drawLoop);
     }, false);
 
     function drawLoop() {
-        time.setTimeParameters();
-
-        var secondsAngleEnd = secondsDial.angleStart + time.actualSeconds * (2 * Math.PI / 60);
-        var minutesAngleEnd = minutesDial.angleStart + time.actualMinutes * (2 * Math.PI / 60);
-        var hoursAngleEnd = minutesDial.angleStart + time.actualHours * (2 * Math.PI / 12);
+        hoursDial.setAngle('end');
+        minutesDial.setAngle('end');
+        secondsDial.setAngle('end');
         context.clearRect(0, 0, canvas.width, canvas.height);
-        hoursDial.draw(hoursDial.angleStart, hoursAngleEnd);
-        minutesDial.draw(angleStart, minutesAngleEnd);
-        secondsDial.draw(angleStart, secondsAngleEnd);
+        hoursDial.draw();
+        minutesDial.draw();
+        secondsDial.draw();
         window.requestAnimationFrame(drawLoop);
     }
 })
