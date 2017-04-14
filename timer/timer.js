@@ -142,18 +142,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     })();
 
+    var button1 = document.querySelector('#button1');
+    var button2 = document.querySelector('#button2');
+    button2.classList.add('active-button');
 
     document.getElementById('button1').addEventListener('click', function () {
         // clock
         hoursDial.setStart('clock');
         minutesDial.setStart('clock');
         secondsDial.setStart('clock');
+        button1.classList.add('active-button');
+        button2.classList.remove('active-button');
     })
     document.getElementById('button2').addEventListener('click', function () {
         // timer
         hoursDial.setStart('timer');
         minutesDial.setStart('timer');
         secondsDial.setStart('timer');
+        button1.classList.remove('active-button');
+        button2.classList.add('active-button');
     })
     document.getElementById('button3').addEventListener('click', function () {
         // smooth
