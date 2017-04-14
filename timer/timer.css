@@ -60,6 +60,7 @@ canvas {
     color: black;
 }
 
-.active-button {
+.active-button, .active-button:hover {
   background-color: orangered;
+  color: white;
 }

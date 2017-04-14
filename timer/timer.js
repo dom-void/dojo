@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var canvas = document.getElementById("clock");
     var context = canvas.getContext("2d");
 
-    var switcher = true;
+    var switcher = false;
 
     function Time() {
         this.actualHours;
@@ -40,10 +40,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 return this.actualMinutes;
                 break;
             case 'hours':
+            case 'work':
                 return this.actualHours;
                 break;
             default:
-                console.log('wrong setTimeParameters() param: "seconds", "minutes" or "hours"');
+                console.log('wrong getTimeValue() param: "seconds", "minutes", "hours" or "work"');
                 break;
         }
     }
@@ -73,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 this.angleStart = this.angleTimerStart;
                 break;
             default:
-                console.log('wrong setStart() param: "clock" or "timer"');
+                console.log('wrong setStart() param: "clock", "timer" or "work"');
                 break;
         }
     }
@@ -81,15 +82,21 @@ document.addEventListener('DOMContentLoaded', function () {
         time.setTimeParameters();
         switch (side) {
             case 'start':
-// FIXME: ▲▼ check why this already gives about 1h and few minutes on start or reset
                 this.angleTimerStart = this.angleOffset + time.getTimeValue(this.name) * (2 * Math.PI / this.fullDialValue);
-                this.angleStart = this.angleTimerStart;
+                // this.angleStart = this.angleTimerStart;
                 break;
             case 'end':
                 this.angleEnd = this.angleOffset + time.getTimeValue(this.name) * (2 * Math.PI / this.fullDialValue);
                 break;
+            case 'workstart':
+                this.angleStart = this.angleOffset;
+                this.angleTimerStart = time.getTimeValue(this.name) * (2 * Math.PI / this.fullDialValue);
+                break;
+            case 'workend':
+                this.angleEnd = this.angleStart + (time.getTimeValue(this.name) * (2 * Math.PI / this.fullDialValue)-this.angleTimerStart);
+                break;
             default:
-                console.log('wrong setAngle() param: "start" or "end"');
+                console.log('wrong setAngle() param: "start", "end" or "work"');
                 break;
         }
     }
@@ -107,19 +114,22 @@ document.addEventListener('DOMContentLoaded', function () {
     var hoursColor = 'rgba(255,0,0,.7)';
     var minutesColor = 'rgba(0,0,255,.5)';
     var secondsColor = 'rgba(100,255,0,.5)';
+    var workTimeColor = 'rgba(200,200,200,.9)';
 
     var hoursDial = new Dial('hours', 60, 140, hoursColor);
     hoursDial.fullDialValue = 12;
     var minutesDial = new Dial('minutes', 40, 110, minutesColor);
     var secondsDial = new Dial('seconds', 20, 75, secondsColor);
-// FIXME: ▼ check why it's not starting itself
+    var timeOfWorkDial = new Dial('work', 143, 147, workTimeColor);
+    timeOfWorkDial.fullDialValue = 12;
+
     hoursDial.setAngle('start');
     minutesDial.setAngle('start');
     secondsDial.setAngle('start');
+    timeOfWorkDial.setAngle('workstart');
     hoursDial.setStart('timer');
     minutesDial.setStart('timer');
     secondsDial.setStart('timer');
-
 
     // window.requestAnimationFrame = function (callback) {
     //     window.setTimeout(callback, 1000 / 1);
@@ -182,6 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
         hoursDial.setStart('timer');
         minutesDial.setStart('timer');
         secondsDial.setStart('timer');
+        timeOfWorkDial.setAngle('workstart');
     })
 
 
@@ -193,10 +204,12 @@ document.addEventListener('DOMContentLoaded', function () {
         hoursDial.setAngle('end');
         minutesDial.setAngle('end');
         secondsDial.setAngle('end');
+        timeOfWorkDial.setAngle('workend');
         context.clearRect(0, 0, canvas.width, canvas.height);
         hoursDial.draw();
         secondsDial.draw();
         minutesDial.draw();
+        timeOfWorkDial.draw();
         window.requestAnimationFrame(drawLoop);
     }
 })
