@@ -1,5 +1,4 @@
 # cool
-cool animations and other mooving stuff  
 this repository is a playground for moving ideas and tests  
 available here: https://dom-void.github.io/cool/  
   
