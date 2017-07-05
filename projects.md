@@ -1,5 +1,5 @@
 # My projects on GitHub
-This file describes my projects on GitHub I'd like to show you.  
+This file describes [my](github.com/dom-void) projects on GitHub I'd like to show you.  
 
 ## Pokemon
 This is my latest project. The goal is to use huge Pokemon API and present some data in the table.
