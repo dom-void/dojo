@@ -1,0 +1,36 @@
+#tory {
+    width: 100px;
+    height: 600px;
+    left: 50px;
+    border: 5px solid black;
+    border-top-style: none;
+    border-bottom-style: none;
+    position: absolute;
+  }
+  
+  #belki {
+    position: absolute;
+    background: white;
+    width: 0px;
+    height: 600px;
+    border: 10px dashed chocolate;
+    border-top: 0;
+    border-bottom: 0;
+  }
+  
+  #peron {
+    position: absolute;
+    background: gray;
+    left: 200px;
+    width: 200px;
+    height: 400px;
+  }
+  
+  #tramwaj {
+    position: absolute;
+    background: #3070ff;
+    left: 30px;
+    top: 30px;
+    width: 150px;
+    height: 300px;
+  }
