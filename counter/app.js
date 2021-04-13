@@ -1,6 +1,4 @@
-"use strict";
-
-let counter = {
+const counter = {
     _state: 0,
     add() {
         this._state += 1;
@@ -16,9 +14,9 @@ let counter = {
     }
 };
 
-let app = document.getElementById("app");
-let button = document.getElementById("button");
-let reset = document.getElementById("reset");
+const app = document.getElementById("app");
+const button = document.getElementById("button");
+const reset = document.getElementById("reset");
 
 button.addEventListener("click", () => {
     counter.add();
