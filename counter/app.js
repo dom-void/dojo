@@ -10,7 +10,7 @@ let counter = {
         return this._state;
     },
     render() {
-        return `${this._state}`
+        return `${this._state}`;
     }
 };
 
