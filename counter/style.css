@@ -5,14 +5,13 @@
 
 body {
     font-family: Arial, Helvetica, sans-serif;
-    color: #1d1d1d;
 }
 
 main {
     width: 130px;
     padding: 10px 0;
     margin: 30px 30px;
-    border: 3px solid #1d1d1d;
+    border: 3px solid #202020;
     border-radius: 5px;
 }
 
@@ -38,6 +37,7 @@ button {
 #app {
     font-size: 3em;
     margin-right: 10px;
+    color: #202020;
 }
 
 #button {
