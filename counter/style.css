@@ -28,7 +28,7 @@ button {
 }
 
 #display {
-    width: 90px;
+    width: 100px;
     margin: auto;
     display: flex;
     justify-content: flex-end;
