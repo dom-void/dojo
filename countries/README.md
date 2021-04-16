@@ -1,0 +1,1 @@
+The idea is to make a form with a country searchbox and display its selected details.
