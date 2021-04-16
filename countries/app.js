@@ -10,7 +10,7 @@ function loadData(countryName) {
         });
 }
 
-loadData("ab")
+loadData("polan")
     .then((res) => {
         console.log(res[0].name);
         document.querySelector('#app').insertAdjacentHTML("afterbegin", `<img src=${res[0].flag} width=200 style="border: 1px solid gray;">`);
